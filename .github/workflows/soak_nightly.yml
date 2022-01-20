@@ -39,25 +39,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2.3.5
 
-      - name: Setup baseline variables
-        id: baseline
-        run: |
-          export BASELINE_SHA=$(git rev-parse HEAD)
-          echo "baseline SHA: ${BASELINE_SHA}"
-
-          echo "::set-output name=BASELINE_SHA::${BASELINE_SHA}"
-
       - name: Setup system details
         id: system
         run: |
+          export BASELINE_SHA=$(git rev-parse HEAD)
           export SOAK_CPUS="7"
           export SOAK_MEMORY="30g"
           export VECTOR_CPUS="4"
 
+          echo "baseline SHA: ${BASELINE_SHA}"
           echo "soak cpus total: ${SOAK_CPUS}"
           echo "soak memory total: ${SOAK_MEMORY}"
           echo "vector cpus: ${VECTOR_CPUS}"
 
+          echo "::set-output name=BASELINE_SHA::${BASELINE_SHA}"
           echo "::set-output name=SOAK_CPUS::${SOAK_CPUS}"
           echo "::set-output name=SOAK_MEMORY::${SOAK_MEMORY}"
           echo "::set-output name=VECTOR_CPUS::${VECTOR_CPUS}"
@@ -104,8 +99,6 @@ jobs:
     runs-on: [self-hosted, linux, x64, soak_builder]
     needs: [compute-soak-meta]
     steps:
-      - uses: colpal/actions-clean@v1
-
       - uses: actions/checkout@v2.3.5
 
       - name: Set up Docker Buildx
