@@ -275,7 +275,6 @@ jobs:
     needs:
       - compute-soak-meta
       - soak-baseline
-      - soak-comparison
 
     steps:
       - name: Set up Python3
