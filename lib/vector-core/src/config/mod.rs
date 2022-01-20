@@ -1,5 +1,6 @@
 use bitmask_enum::bitmask;
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
 mod global_options;
 mod id;
@@ -20,6 +21,23 @@ pub enum DataType {
     Log,
     Metric,
     Trace,
+}
+
+impl fmt::Display for DataType {
+    // fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut s = String::new();
+        self.contains(DataType::Log).then(|| s.push_str("Log"));
+        self.contains(DataType::Log | DataType::Metric)
+            .then(|| s.push(','));
+        self.contains(DataType::Metric)
+            .then(|| s.push_str("Metric"));
+        self.contains(DataType::Metric | DataType::Trace)
+            .then(|| s.push(','));
+        self.contains(DataType::Trace).then(|| s.push_str("Trace"));
+        write!(f, "{}", s)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]

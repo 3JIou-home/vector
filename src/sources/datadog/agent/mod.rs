@@ -125,7 +125,7 @@ impl SourceConfig for DatadogAgentConfig {
             self.multiple_outputs,
         );
         let series_v2_service = source.series_v2_service();
-
+        warn!(message = "Datatype", "{}", self.outputs()[0].ty);
         let shutdown = cx.shutdown;
         Ok(Box::pin(async move {
             let span = crate::trace::current_span();
