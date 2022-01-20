@@ -45,7 +45,7 @@ jobs:
           export BASELINE_SHA=$(git rev-parse HEAD)
           echo "baseline SHA: ${BASELINE_SHA}"
 
-          echo "::set-output name=BASELINE_TAG::${BASELINE_TAG}"
+          echo "::set-output name=BASELINE_SHA::${BASELINE_SHA}"
 
       - name: Setup system details
         id: system
@@ -133,7 +133,6 @@ jobs:
       - name: Build and push 'soak-vector' image
         uses: docker/build-push-action@v2.8.0
         with:
-          context: vector/
           file: soaks/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
