@@ -43,6 +43,8 @@ jobs:
         id: baseline
         run: |
           export BASELINE_SHA=$(git rev-parse HEAD)
+          echo "baseline SHA: ${BASELINE_SHA}"
+
           echo "::set-output name=BASELINE_TAG::${BASELINE_TAG}"
 
       - name: Setup system details
