@@ -13,8 +13,8 @@ parser.add_argument('--variant', type=str, default='baseline', help='the variant
 parser.add_argument('--capture-dir', type=str, help='the directory to search for capture files')
 parser.add_argument('--vector-cpus', type=int, help='the total number of CPUs given to vector during the experiment')
 parser.add_argument('--warmup-seconds', type=int, default=30, help='the number of seconds to treat as warmup')
-parser.add_argument('--skew-limit', type=int, default=1, help='the acceptable +/- limit for skew values, default 1.0')
-parser.add_argument('--outlier-ratio-limit', type=int, default=0.03, help='the acceptable outlier percentage threshold, default 0.03')
+parser.add_argument('--skew-limit', type=float, default=1, help='the acceptable +/- limit for skew values, default 1.0')
+parser.add_argument('--outlier-ratio-limit', type=float, default=0.03, help='the acceptable outlier percentage threshold, default 0.03')
 args = parser.parse_args()
 
 bytes_written = pd.concat(common.compute_throughput(
