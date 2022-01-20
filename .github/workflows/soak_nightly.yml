@@ -42,10 +42,7 @@ jobs:
       - name: Setup baseline variables
         id: baseline
         run: |
-          pushd vector
           export BASELINE_SHA=$(git rev-parse HEAD)
-          popd
-
           echo "::set-output name=BASELINE_TAG::${BASELINE_TAG}"
 
       - name: Setup system details
