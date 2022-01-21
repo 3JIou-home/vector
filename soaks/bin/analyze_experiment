@@ -116,11 +116,11 @@ omitted if no interesting changes are observed.
 </details>
 ''')
 
-erratic_filter = ~results.experiment.isin(known_erratic_soaks)
+declared_erratic = results.experiment.isin(known_erratic_soaks)
 p_value_violation = results['p-value'] < args.p_value
-erratic_violation = (results['comparison CoV'] > args.coefficient_of_variation_limit) | (results['baseline CoV'] > args.coefficient_of_variation_limit)
+erratic_violation = results.erratic == True
 
-changes = results[(p_value_violation | erratic_violation) & erratic_filter].copy(deep=True)
+changes = results[((p_value_violation | erratic_violation) & ~declared_erratic)].copy(deep=True)
 changes['confidence'] = changes['p-value'].apply(common.confidence)
 changes = changes.drop(labels=['p-value', 'baseline mean',
                                'baseline stdev', 'comparison mean',
@@ -129,10 +129,35 @@ changes = changes.drop(labels=['p-value', 'baseline mean',
                                'comparison stdev', 'declared erratic'], axis=1)
 changes = changes[changes['Δ mean %'].abs() > args.mean_drift_percentage].sort_values('Δ mean %', ascending=False)
 changes['Δ mean'] = changes['Δ mean'].apply(common.human_bytes)
-if len(changes) > 0:
+
+
+unjustly_declared_erratic = results[~erratic_violation & declared_erratic].copy(deep=True)
+unjustly_declared_erratic = unjustly_declared_erratic.drop(labels=['p-value', 'baseline mean',
+                                                                   'baseline stdev', 'comparison mean', 'Δ mean',
+                                                                   'baseline outlier %', 'comparison outlier %',
+                                                                   'comparison stdev', 'declared erratic'], axis=1)
+
+detected_changes = len(changes) > 0
+detected_injustice = len(unjustly_declared_erratic) > 0
+
+if detected_changes and not detected_injustice:
     print(changes.to_markdown(index=False, tablefmt='github'))
+elif detected_changes and detected_injustice:
+    print(f"Changes in throughput with confidence {common.confidence(args.p_value)}:")
+    print()
+    print(changes.to_markdown(index=False, tablefmt='github'))
+    print()
+    print(f"Experiments that were declared erratic but were detected as no longer being so, cutoff {args.coefficient_of_variation_limit}:")
+    print()
+    print(unjustly_declared_erratic.to_markdown(index=False, tablefmt='github'))
+elif not detected_changes and detected_injustice:
+    print(f"No interesting in throughput with confidence {common.confidence(args.p_value)}:")
+    print()
+    print(f"Experiments that were declared erratic but were detected as no longer being so, cutoff {args.coefficient_of_variation_limit}:")
+    print()
+    print(unjustly_declared_erratic.to_markdown(index=False, tablefmt='github'))
 else:
-    print("No interesting changes with confidence {}.".format(common.confidence(args.p_value)))
+    print(f"No interesting changes with confidence {common.confidence(args.p_value)}.")
 
 print()
 print("<details>")
