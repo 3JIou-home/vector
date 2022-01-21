@@ -304,7 +304,6 @@ jobs:
           ./soaks/bin/detect_erratic --capture-dir ${{ github.event.number }}-${{ github.run_attempt }}-captures/ \
                                      --vector-cpus ${{ needs.compute-soak-meta.outputs.vector-cpus }} \
                                      --warmup-seconds 30 \
-                                     --outlier-ratio-limit 0.03 \
                                      --variant baseline
 
   soak-comparison:
@@ -381,7 +380,6 @@ jobs:
           ./soaks/bin/detect_erratic --capture-dir ${{ github.event.number }}-${{ github.run_attempt }}-captures/ \
                                      --vector-cpus ${{ needs.compute-soak-meta.outputs.vector-cpus }} \
                                      --warmup-seconds 30 \
-                                     --outlier-ratio-limit 0.03 \
                                      --variant comparison
 
   analyze-results:
