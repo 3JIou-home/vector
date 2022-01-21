@@ -304,7 +304,8 @@ jobs:
           ./soaks/bin/detect_erratic --capture-dir ${{ github.event.number }}-${{ github.run_attempt }}-captures/ \
                                      --vector-cpus ${{ needs.compute-soak-meta.outputs.vector-cpus }} \
                                      --warmup-seconds 30 \
-                                     --variant baseline
+                                     --variant baseline \
+                                     --erratic-soaks http_pipelines_blackhole,http_pipelines_blackhole_acks,http_to_http_acks,splunk_transforms_splunk3,splunk_hec_route_s3,http_datadog_filter_blackhole,http_pipelines_no_grok_blackhole
 
   soak-comparison:
     name: Soak (${{ matrix.target }}) - comparison - replica ${{ matrix.replica }}
@@ -380,7 +381,8 @@ jobs:
           ./soaks/bin/detect_erratic --capture-dir ${{ github.event.number }}-${{ github.run_attempt }}-captures/ \
                                      --vector-cpus ${{ needs.compute-soak-meta.outputs.vector-cpus }} \
                                      --warmup-seconds 30 \
-                                     --variant comparison
+                                     --variant comparison \
+                                     --erratic-soaks http_pipelines_blackhole,http_pipelines_blackhole_acks,http_to_http_acks,splunk_transforms_splunk3,splunk_hec_route_s3,http_datadog_filter_blackhole,http_pipelines_no_grok_blackhole
 
   analyze-results:
     name: Soak analysis
@@ -421,6 +423,7 @@ jobs:
                                          --comparison-sha ${{ needs.compute-soak-meta.outputs.comparison-sha }} \
                                          --vector-cpus ${{ needs.compute-soak-meta.outputs.vector-cpus }} \
                                          --warmup-seconds 30 \
+                                         --erratic-soaks http_pipelines_blackhole,http_pipelines_blackhole_acks,http_to_http_acks,splunk_transforms_splunk3,splunk_hec_route_s3,http_datadog_filter_blackhole,http_pipelines_no_grok_blackhole \
                                          --p-value 0.1 > /tmp/${{ github.event.number}}-${{ github.run_attempt }}-analysis
 
       - name: Read analysis file
